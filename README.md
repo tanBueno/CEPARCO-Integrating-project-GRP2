@@ -1,5 +1,8 @@
 # CEPARCO-Integrating-project-GRP2
 
+# Video pitch link
+https://drive.google.com/file/d/1Lac1JPG2trMI-AG0c_r0rROZRKeCm6Y-/view?usp=sharing 
+
 ## 0.) Abstract of your proposed project
 
 This project implements a GPU-accelerated edge detection algorithm using CUDA to implement parallel processing and compares its performance with a sequential C implementation. The process is done by applying a 5x5 Gaussian filter to reduce image noise, followed by a 3x3 Sobel operator to detect edges by calculating pixel gradients. Since each pixel is processed independently during convolution, the workload is distributed across GPU threads using 16x16 thread blocks. Optimizations such as shared memory tiling and constant memory are explored to improve memory access, while hysteresis thresholding remains on the CPU due to its dependence on pixel connectivity. The implementation will be tested on grayscale images of different resolutions to compare the execution times of the sequential C baseline and CUDA pipelines.
