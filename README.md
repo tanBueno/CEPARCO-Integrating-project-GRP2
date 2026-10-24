@@ -1,7 +1,8 @@
 # CEPARCO-Integrating-project-GRP2
 
 # Video pitch link
-https://drive.google.com/file/d/1Lac1JPG2trMI-AG0c_r0rROZRKeCm6Y-/view?usp=sharing 
+https://drive.google.com/file/d/1U2MF64K19MUbimjEvoSpS-VywXhaIDcU/view?usp=sharing
+
 
 # Revision
 Topic switched from image Gaussian Blur to Wordle Information Entropy Solver
