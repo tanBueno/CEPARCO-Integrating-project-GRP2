@@ -3,6 +3,9 @@
 # Video pitch link
 https://drive.google.com/file/d/1Lac1JPG2trMI-AG0c_r0rROZRKeCm6Y-/view?usp=sharing 
 
+# Revision
+Topic switched from image Gaussian Blur to Wordle Information Entropy Solver
+
 ## 0.) Abstract of your proposed project
 
 This project implements a high-performance Wordle solver by parallelizing Shannon entropy calculations. Existing sequential CPU implementations C++ often face performance bottlenecks due to nested loops iterating through large word lists. Our project utilizes SIMT architecture via CUDA to evaluate a guess and find word combinations across thousands of warps. We assign a thread block to each guess, where threads evaluate feedback combinations and tally results into a 243-bin (3^5) histogram using shared memory and operations. A parallel reduction will compute the Shannon entropy to determine the guess with the information gained. The CPU handles sequential operations, including word list loading, user input processing, and memory coordination between the host and device. Using Google Colab’s NVIDIA Tesla T4 cloud GPUs, we will develop a system in C++ and utilize Github for version control. The outputs are a ranked list of optimal next guesses, a benchmark comparing CPU and CUDA execution time across roughly 30 million evaluations, and verification logs confirming that GPU entropy matches the CPU baseline within an absolute tolerance of 1x10^-4 and a relative tolerance of 1x10^-5. 
