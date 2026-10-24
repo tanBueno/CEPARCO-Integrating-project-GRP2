@@ -5,80 +5,69 @@ https://drive.google.com/file/d/1Lac1JPG2trMI-AG0c_r0rROZRKeCm6Y-/view?usp=shari
 
 ## 0.) Abstract of your proposed project
 
-This project implements a GPU-accelerated edge detection algorithm using CUDA to implement parallel processing and compares its performance with a sequential C implementation. The process is done by applying a 5x5 Gaussian filter to reduce image noise, followed by a 3x3 Sobel operator to detect edges by calculating pixel gradients. Since each pixel is processed independently during convolution, the workload is distributed across GPU threads using 16x16 thread blocks. Optimizations such as shared memory tiling and constant memory are explored to improve memory access, while hysteresis thresholding remains on the CPU due to its dependence on pixel connectivity. The implementation will be tested on grayscale images of different resolutions to compare the execution times of the sequential C baseline and CUDA pipelines.
+This project implements a high-performance Wordle solver by parallelizing Shannon entropy calculations. Existing sequential CPU implementations C++ often face performance bottlenecks due to nested loops iterating through large word lists. Our project utilizes SIMT architecture via CUDA to evaluate a guess and find word combinations across thousands of warps. We assign a thread block to each guess, where threads evaluate feedback combinations and tally results into a 243-bin (3^5) histogram using shared memory and operations. A parallel reduction will compute the Shannon entropy to determine the guess with the information gained. The CPU handles sequential operations, including word list loading, user input processing, and memory coordination between the host and device. Using Google Colab’s NVIDIA Tesla T4 cloud GPUs, we will develop a system in C++ and utilize Github for version control. The outputs are a ranked list of optimal next guesses, a benchmark comparing CPU and CUDA execution time across roughly 30 million evaluations, and verification logs confirming that GPU entropy matches the CPU baseline within an absolute tolerance of 1x10^-4 and a relative tolerance of 1x10^-5. 
+
 
 ## 1.) Description of your proposed project
 
 ## a. What are the inputs to your project? 
 
-Input Image Data: Grayscale images (.bmp/ .png/ .pgm) across different resolutions to evaluate scalability.
-Filter Kernels and Parameters:
-5x5 2D Gaussian low-pass filter kernel parameterized by standard deviation
-3x3 Horizontal and Vertical Sobel derivative kernels 
-Dual Hysteresis for sequential host side edge detection
+- Secret Word List (Ns=2,315): Contiguous array of 5-letter string arrays representing valid hidden answers.
+
+- Guess Word List (Ng=12,972): Contiguous array of all valid 5-letter words allowed as guesses.
+
+- Game State Constraints: Current feedback bitmasks (Green, Yellow, Gray) supplied dynamically by the user after each turn to filter the remaining active search space.
+
 
 ## b. Propose process
 
 ## i. What processes will be parallelized using SIMT (GPU/CUDA) or SIMD-based AVX/AVX2/AVX512 assembly project?
 
-The parallel pipeline consists of two back to back 2D spatial convolution kernels executed in GPU VRAM:
-Stage 1: 2D 5x5 Gaussian Low Pass Convolution Kernel: Each GPU thread suppress high frequency spatial noise by convolving a 5x5 local neighborhood around pixel with the Gaussian kernel:
+- Combinatorial Pattern Evaluation: Every thread evaluates a distinct (guess, secret_word) pair, simulating Wordle's feedback rules via fast bitwise operations.
 
-<img width="487" height="67" alt="image" src="https://github.com/user-attachments/assets/a11e71f8-fa96-44b4-bb71-26c524d6f79a" />
+- Bucket Frequency Distribution: Tallying the frequency of each resulting feedback pattern across the secret word space.
 
+- Shannon Entropy Calculation & Parallel Reduction: Computing across blocks to identify the guess that maximizes information gain.
 
-Stage 2: 3x3 Sobel Gradient Magnitude & Direction Kerne: Reading directly from the intermediate device buffer Ismooth, each GPU thread computes the horizontal (Gx) and vertical (Gy) first order spatial derivative and evaluates the total gradient magnitude M(x,y):
-
-<img width="545" height="306" alt="image" src="https://github.com/user-attachments/assets/4013d3a3-1632-4fac-b380-d4997ee7d3ea" />
+<img width="216" height="45" alt="image" src="https://github.com/user-attachments/assets/3e409861-d05e-4607-a578-65de3c0839a9" />
 
 
 ## ii. What existing implementations have been done with the proposed process (i.e., related works)? How would it differ from your proposed implementation if it has been parallelized? 
 
-Existing Implementations (Related work)
-Sequential CPU Approach: Standard C implementations use nested for loops to process an image one pixel at a time. For high resolution images, calculating a 5x5 Gaussian blur followed by a 3x3 Sobel filter requires millions of iterations which make the CPU execution time very slow.
+Related Work: Sequential  C++ information-entropy solvers which iterate through loops on the CPU. The information on the theoretical Wordle solver is presented by 3Blue1Brown (2022), which shows the scores of each guess using the Shannon entropy of its feedback distribution. This was implemented using sequential Python code on the CPU. There are other open source solvers with the same approach. The GPU implementation was by mrowan137 and was written in C++ and HIP. This was used with an AMD GPU. Their implementation ranks guesses using the average number of solution words eliminated, evaluated over triplets, so it did not use Shannon entropy. 
 
-High Level libraries and basic GPU Approaches: Libraries like OpenCV provide prebuilt functions, but they hide the underlying parallel architecture. Meanwhile CUDA implementations assign one GPU thread per pixel and real all neighboring pixels directly from slow GPU VRAM. Because neighboring pixels have overlapping windows, each pixel gets fetched from slow memory up to 25 times during the 5x5 Gaussian stage and 9 times during the 3x3 Sobel stage, creating a heavy memory bottleneck.
+Differentiation: The project differs from the ranked guesses using Shannon entropy with the 243 feedback pattern. The target platform will be performed with NVIDIA CUDA on Google Colab. It will also use a parallel design that uses one thread block per guess, a 243-bin shared-memory histogram built with atomic additions, block-level entropy reduction, and CPU fallback when there are a few guesses left. 
 
-Proposed Differentiation: 
-Instead of relying on prebuilt libraries or slow VRAM reads, we will build a custom Shared Memory Tiled CUDA kernel. Threads in each block will work together to load an image tile into fast on chip Shared memory once, and store the fixed filter weights in Constant Memory so all threads can read them instantly
-Three Way Performance Benchmark: We will directly compare the execution times of three versions. First is Sequential C baseline, Second is a Naive CUDA kernel using Global Memory, and Last is Our Optimized CUDA kernel using shared Memory.
-Single Channel VRAM Pipeline: By focusing strictly on 8 bit grayscale images, we reduce CPU to GPU data transfer size by 3x compared to RGB. We also keep the blurred image directly inside GPU memory between Stage 1 and 2, avoiding extra data transfers back and fourth to the CPU
 
 
 
 ## iii. Discuss plans on how to parallelize your proposed process.
 
-To parallelize the edge detection pipeline in CUDA, we plan to divide the input image into a 2D grid of 16x16 thread blocks so that the GPU Thread is responsible for computing a single pixel. To apply the Gaussian blur and Sobel Filters, it is necessary to make nested loops that would scan the pixels one by one, which would be slower the larger the image gets. We use the GPU to compute thousands of pixels and their convolutions at the same time. We also plan to explore using CUDA shared memory and constant memory so threads in the same block can reuse neighboring pixel values and filter weights without having to repeatedly fetch them from slower global memory. Keeping the image data inside the GPU memory between grayscale, Gaussian blur, and Sobel stages is done so that we only have to transfer the image between the CPU and GPU at the start and end of the pipeline.
+We will use a fixed 243-bin (3^5) histogram per guess to count the possible feedback patterns. We will assign one thread block to each guess, with the threads in the block distributing the evaluations across the remaining secret words. Each thread will evaluate a (guess, secret_word) pair and encode the resulting green, yellow, and gray feedback as one of the 243 patterns. The block will accumulate pattern frequencies in a histogram held in shared memory, using atomic operations, and then reduce over the 243 bins to compute the Shannon entropy of the guess. Then, a separate parallel reduction will compare the entropy scores across all guesses to identify the guess with the highest information gain. We will also explore shared memory, atomic operations, and parallel reduction techniques to improve performance compared to the sequential CPU implementation.
+
 
 ## iv. What other processes are in the project but will not be parallelized.
 
-The supporting parts of the program will remain on the CPU since they do not benefit from GPU parallelization. This includes reading the input image file from disk, decoding the image format into a pixel array, and saving the final edge-detected image back to a file. Setting up the memory and copying the image data between the host CPU and the GPU, will be handled by the main C program.
+The loading of the secret_word and guess lists, accepting user input for guesses and feedback, and updating the list of possible secret words based on the feedback received will remain on the CPU. The CPU will also handle displaying the recommended guess and its entropy score, memory coordination, and data transfers between it and the GPU.
 
 ## c. What are the outputs of your project?
 
-The project outputs will be the visual outputs of the Gaussian image, Sobel gradient magnitude map, and threshold of the binary edge map. The CUDA outputs will be matched with the sequential C baseline using mean squared error and a IEEE-754 floating-point tolerance. A performance test benchmark report will be added. This will show the execution time comparisons and speedup tables for images from 5122 up to 8K resolution. These comparisons will be with the following, Sequential C, Naive CUDA kernel, and the Optimized CUDA kernel that has the shared memory tiling and constant memory.
+The output of the project will be the ranked list of optimal next guesses calculated by the highest Shannon entropy score. The main comparison benchmark for comparing sequential CPU performance vs parallel CUDA performance in execution time, GPU kernel time, host-device transfer time, single-threaded C++ time, and speedup for CPU over GPU. The verification logs for the GPU entropy compared to the CPU baseline. It will consist of verifications for the feedback patterns, histogram counts, and selected guesses. The floating-point entropy values will also be compared with an absolute tolerance of 1x10^-4 and a relative tolerance of 1x10^-5 will also be shown.
 
 ## 2.) Proposed target implementation platform of the proposed project
 
-The target implementation platform for the proposed project are the following two: GPU Hardware to be used is an NVIDIA GPU with CUDA Compute Capability 7.5+. A plausible device to be used is a laptop with an NVIDIA RTX series. The other platform is the CPU x86-64 multi-core processor that will host the main code. This will execute the kernel call to CUDA accessing the GPU threads.
+The target implementation platform for the project consists of using Google Colab’s NVIDIA Tesla T4 cloud GPU with CUDA support. The core scripts will be implemented using C++. This includes the C++ baseline implementation comparison, the C++ implementation will have the same word list and packed word format as the CUDA implementation. GitHub will be used for version control and documentation of the project.
+
 
 ## 3.) Mid-project milestones of the proposed project
 
-The following objectives are expected by the group to be completed: The first objective is a complete C program that handles the input and output of the image. It will run a baseline sequential 2D Gaussian smoothing and 2D edge detection as a comparison for the parallelized implementation, and an expected output of results of CPU execution times. The second objective is the CUDA code. The implementation of the Gaussian Blur and the Sobel kernels that will use the 2D thread blocks and global memory. The third objective is a detailed comparison of the base line code to the CUDA implementation. This consists of comparing the runtimes of the baseline C implementation to the GPU kernel runtime. A stress test will be performed with a 1080p and 4k image test.
+The milestone at week 10 for the mid-project demonstration will feature the functional sequential CPU baseline that has the entropy calculation for a single turn and the basic CUDA kernel executing pattern matching and memory transfer for the host and device of the subset of words. The program should have matching histograms from the baseline, and entropies match within the absolute and relative tolerance. The final delivery at week 13 will be the full integrated CUDA entropy solver code. Benchmark reports for CPU vs GPU execution speeds across the 12,932 x 2,315 = 30,030,180  evaluations. There should be zero integer mismatch, and entropy within tolerance. The GitHub will also be provided, containing the project, documentation, and results.
 
 ## 4. References
 
-[1] R. C. Gonzalez and R. E. Woods, Digital Image Processing, 4th ed. New York, NY, USA: Pearson, 2018. (Covers the mathematical formulation of 2D Gaussian low-pass spatial filtering and Sobel gradient operators).
+[1] Mrabet, A. (2023, November 4). Solving Wordle with computer science. Ahmed Mrabet — Data Scientist & ML Engineer. https://ahmedmrabet.me/blog/solving-wordle-with-computer-science 
 
-[2] D. B. Kirk and W. W. Hwu, Programming Massively Parallel Processors: A Hands-on Approach, 4th ed. Cambridge, MA, USA: Morgan Kaufmann, 2022, ch. 7, pp. 139–168. (Covers 2D parallel convolution in CUDA, Constant Memory caching, and Shared Memory tiling with halo cells). 
+[2] mrowan137. (n.d.). Wordle-GPU [Source code]. GitHub. https://github.com/mrowan137/wordle-gpu
 
-[3] J. Canny, "A computational approach to edge detection," IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. PAMI-8, no. 6, pp. 679–698, Nov. 1986, doi: 10.1109/TPAMI.1986.4767851. (Foundational paper for multi-stage Gaussian smoothing, gradient magnitude extraction, and hysteresis edge tracking).
-
-[4] Y. Luo and R. Duraiswami, "Canny edge detection on NVIDIA CUDA," in Proc. IEEE Computer Society Conference on Computer Vision and Pattern Recognition Workshops (CVPRW), Anchorage, AK, USA, Jun. 2008, pp. 1–8, doi: 10.1109/CVPRW.2008.4563088. (Related work demonstrating GPU-accelerated Gaussian and Sobel stages vs. sequential host bottlenecks in hysteresis tracking).
-
-[5] K. Che, W. Wang, and L. Zhang, "A parallel implementation of Sobel edge detection based on CUDA," in Proc. International Conference on Computer Science and Service System (CSSS), Nanjing, China, Aug. 2012, pp. 1882–1885. (Related work analyzing global memory bandwidth bottlenecks in naive CUDA Sobel kernels).
-
-[6] J. L. Hennessy and D. A. Patterson, Computer Architecture: A Quantitative Approach, 6th ed. Cambridge, MA, USA: Morgan Kaufmann, 2017, ch. 4. (Course textbook reference for Data-Level Parallelism in Vector, SIMD, and GPU/SIMT architectures).
-
-[7] NVIDIA Corporation, CUDA C++ Programming Guide, Version 12.x, 2025. [Online]. Available: https://docs.nvidia.com/cuda/cuda-c-programming-guide/
-
+[3] Sanderson, G. (3Blue1Brown). (2022). Solving Wordle using information theory. Video and source code: 
+https://github.com/3b1b/videos/tree/master/_2022/wordle 
