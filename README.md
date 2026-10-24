@@ -19,7 +19,7 @@ This project implements a high-performance Wordle solver by parallelizing Shanno
 
 - Guess Word List (Ng=12,972): Contiguous array of all valid 5-letter words allowed as guesses.
 
-- Game State Constraints: Current feedback bitmasks (Green, Yellow, Gray) supplied dynamically by the user after each turn to filter the remaining active search space.
+- Game State Constraints: Current feedback bitmasks (Green, Yellow, Gray) supplied dynamically by the user after each turn to filter the remaining active search space. In the game, green means the secret word has this letter and is in the right position, yellow means the letter is in the secret word but not in the right position, and gray means the letter is not inside the secret word.
 
 
 ## b. Propose process
