@@ -13,17 +13,24 @@
 
 ## Results
 - CPU time min, max, avg over 30 runs. Top 10 first guesses ranked by entropy
-<img width="671" height="218" alt="image" src="https://github.com/user-attachments/assets/42f27aeb-2554-4502-bb25-b3fb4de5f44c" />
+<img width="683" height="222" alt="image" src="https://github.com/user-attachments/assets/7732d9de-0d1e-4b4a-9f8e-d43c8507654f" />
+
 
 - GPU Histogram Error count and Entropy error count, and Top 10 first guesses
-<img width="331" height="297" alt="image" src="https://github.com/user-attachments/assets/afde72c7-c186-4c44-845c-f8f8dbdea3da" />
+<img width="327" height="297" alt="image" src="https://github.com/user-attachments/assets/ff678673-2794-4b10-abbc-b384c88c3a36" />
+
 
 - NSYS PROFILE
-- <img width="1316" height="602" alt="image" src="https://github.com/user-attachments/assets/591e8853-1259-445c-ae05-f2b7c0bef17b" />
+<img width="1331" height="610" alt="image" src="https://github.com/user-attachments/assets/ef1b21a6-216f-403c-ba66-45f2c3016916" />
+
 
 - The CPU redoes the same work and compares it with what the GPU gave, histogram counts are whole numbers, so they must match exactly, and entropies can differ in the last digits, so we allow an absolute tolerance of 0.0001 and a relative tolerance of 0.00001. The results show for the GPU, 0 histogram errors and entropy errors, and same top 10 as with the CPU.
-- CPU on 30 runs had a min of 1,378.87 ms, max of 1884.697 ms, and an average of 1480.5393 ms.
-- GPU kernel on 30 runs had a min of 3.976 ms, max of 4.082 ms, and an average of 4 ms.
+- CPU on 30 runs had a min of 1382.51 ms, max of 1821.898 ms, and an average of 1485.4661 ms.
+- GPU kernel on 30 runs had a min of  4.262 ms, max of 4.826 ms, and an average of 4.526 ms.
+
+- Speed ups:
+<img width="792" height="177" alt="image" src="https://github.com/user-attachments/assets/3632594e-77d0-4b47-9445-3e2557659bd3" />
+
 
 # Video pitch link
 https://drive.google.com/file/d/1U2MF64K19MUbimjEvoSpS-VywXhaIDcU/view?usp=sharing
