@@ -1,5 +1,9 @@
 # CEPARCO-Integrating-project-GRP2
 
+
+# MID PROPOSAL MILESTONE
+
+
 # Video pitch link
 https://drive.google.com/file/d/1U2MF64K19MUbimjEvoSpS-VywXhaIDcU/view?usp=sharing
 
