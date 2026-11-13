@@ -5,6 +5,9 @@ Google Colab: https://colab.research.google.com/drive/1i5dJi1BuCl-6fsyGmwBvvDvSC
 Dataset: https://drive.google.com/drive/folders/1qaY8yQJHypNpmHhxHl3clelSWTlreXOG?usp=sharing
 
 # MID REPORT MILESTONE
+
+Mid report video: https://drive.google.com/file/d/1bKZM1zmaybWdcV4VPbsrDnWKxVZlKxJd/view?usp=sharing
+
 ## Update
 - We built a C++ baseline and a CUDA version that rank all 12,953 guesses by entropy for the first turn.
 -  Implemented the pattern check, a 243-bin shared-memory histogram per guess (atomicAdd), and a block reduction for the entropy on the GPU.
