@@ -36,6 +36,8 @@
 - Add candidate filtering
 - Add CPU fallback at a certain threshold from measured turns. Relevant when candidates are already a small pool of choices
 
+# AI Declaration
+
 # Video pitch link
 https://drive.google.com/file/d/1U2MF64K19MUbimjEvoSpS-VywXhaIDcU/view?usp=sharing
 
