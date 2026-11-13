@@ -12,7 +12,18 @@
 -  Addressing feedback on candidate-set edge cases: at turn 1, the top 10 entropy is displayed, so in turn 2 will be when user input will be required for a guess, this will be planned for final report with the filtering edge cases.
 
 ## Results
-- 
+- CPU time min, max, avg over 30 runs. Top 10 first guesses ranked by entropy
+<img width="671" height="218" alt="image" src="https://github.com/user-attachments/assets/42f27aeb-2554-4502-bb25-b3fb4de5f44c" />
+
+- GPU Histogram Error count and Entropy error count, and Top 10 first guesses
+<img width="331" height="297" alt="image" src="https://github.com/user-attachments/assets/afde72c7-c186-4c44-845c-f8f8dbdea3da" />
+
+- NSYS PROFILE
+- <img width="1316" height="602" alt="image" src="https://github.com/user-attachments/assets/591e8853-1259-445c-ae05-f2b7c0bef17b" />
+
+- The CPU redoes the same work and compares it with what the GPU gave, histogram counts are whole numbers, so they must match exactly, and entropies can differ in the last digits, so we allow an absolute tolerance of 0.0001 and a relative tolerance of 0.00001. The results show for the GPU, 0 histogram errors and entropy errors, and same top 10 as with the CPU.
+- CPU on 30 runs had a min of 1,378.87 ms, max of 1884.697 ms, average of 1480.5393 ms.
+- GPU kernel has 
 
 # Video pitch link
 https://drive.google.com/file/d/1U2MF64K19MUbimjEvoSpS-VywXhaIDcU/view?usp=sharing
