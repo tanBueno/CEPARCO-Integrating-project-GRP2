@@ -43,6 +43,7 @@ Mid report video: https://drive.google.com/file/d/1bKZM1zmaybWdcV4VPbsrDnWKxVZlK
 - Add CPU fallback at a certain threshold from measured turns. Relevant when candidates are already a small pool of choices
 
 # AI Declaration
+We used AI to help clean up our GitHub markdown formatting, figure out the CLI syntax for nsys, and make sense of unfamiliar profiling metrics in the output. It also helped us track down a few unexpected bugs and mistyped variable names when writing the C++ and CUDA implementation. Everything else, including the core C/CUDA logic, kernel implementation, and performance analysis speedup, was done and handled by the team.
 
 # Video pitch link
 https://drive.google.com/file/d/1U2MF64K19MUbimjEvoSpS-VywXhaIDcU/view?usp=sharing
