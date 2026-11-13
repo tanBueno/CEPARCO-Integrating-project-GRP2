@@ -1,8 +1,18 @@
 # CEPARCO-Integrating-project-GRP2
 
 
-# MID PROPOSAL MILESTONE
+# MID REPORT MILESTONE
+## Update
+- We built a C++ baseline and a CUDA version that rank all 12,953 guesses by entropy for the first turn.
+-  Implemented the pattern check, a 243-bin shared-memory histogram per guess (atomicAdd), and a block reduction for the entropy on the GPU.
+-  The word lists have 12,953 guesses and 2,309 secrets, not 12,972 and 2,315 as in the proposal.
+-  Addressing feedback on repeated letters: green first, then yellow only for unused copies
+-  Addressing feedback on deterministic selection: alphabetical order and word replaces best if better by more
+  then 0.000001. tie always occurs when the alphabetically first word.
+-  Addressing feedback on candidate-set edge cases: at turn 1, the top 10 entropy is displayed, so in turn 2 will be when user input will be required for a guess, this will be planned for final report with the filtering edge cases.
 
+## Results
+- 
 
 # Video pitch link
 https://drive.google.com/file/d/1U2MF64K19MUbimjEvoSpS-VywXhaIDcU/view?usp=sharing
