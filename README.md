@@ -22,8 +22,8 @@
 - <img width="1316" height="602" alt="image" src="https://github.com/user-attachments/assets/591e8853-1259-445c-ae05-f2b7c0bef17b" />
 
 - The CPU redoes the same work and compares it with what the GPU gave, histogram counts are whole numbers, so they must match exactly, and entropies can differ in the last digits, so we allow an absolute tolerance of 0.0001 and a relative tolerance of 0.00001. The results show for the GPU, 0 histogram errors and entropy errors, and same top 10 as with the CPU.
-- CPU on 30 runs had a min of 1,378.87 ms, max of 1884.697 ms, average of 1480.5393 ms.
-- GPU kernel has 
+- CPU on 30 runs had a min of 1,378.87 ms, max of 1884.697 ms, and an average of 1480.5393 ms.
+- GPU kernel on 30 runs had a min of 3.976 ms, max of 4.082 ms, and an average of 4 ms.
 
 # Video pitch link
 https://drive.google.com/file/d/1U2MF64K19MUbimjEvoSpS-VywXhaIDcU/view?usp=sharing
