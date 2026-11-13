@@ -1,5 +1,7 @@
 # CEPARCO-Integrating-project-GRP2
 
+Google Colab: https://colab.research.google.com/drive/1i5dJi1BuCl-6fsyGmwBvvDvSCtzewb6k?usp=sharing
+Dataset: https://drive.google.com/drive/folders/1qaY8yQJHypNpmHhxHl3clelSWTlreXOG?usp=sharing
 
 # MID REPORT MILESTONE
 ## Update
