@@ -28,9 +28,13 @@
 - CPU on 30 runs had a min of 1382.51 ms, max of 1821.898 ms, and an average of 1485.4661 ms.
 - GPU kernel on 30 runs had a min of  4.262 ms, max of 4.826 ms, and an average of 4.526 ms.
 
-- Speed ups:
+- Speedups:
 <img width="792" height="177" alt="image" src="https://github.com/user-attachments/assets/3632594e-77d0-4b47-9445-3e2557659bd3" />
 
+## Plans for final Report
+- Complete solver loop that has user guesses
+- Add candidate filtering
+- Add CPU fallback at a certain threshold from measured turns. Relevant when candidates are already a small pool of choices
 
 # Video pitch link
 https://drive.google.com/file/d/1U2MF64K19MUbimjEvoSpS-VywXhaIDcU/view?usp=sharing
